@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>414 - URI Too Long</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #ffffff;
+            color: #333333;
+            line-height: 1.6;
+            padding: 40px 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .error-header {
+            color: #666666;
+            font-size: 18px;
+            margin-bottom: 30px;
+            font-weight: 400;
+        }
+
+        .error-title {
+            display: flex;
+            align-items: center;
+            margin-bottom: 30px;
+            gap: 15px;
+        }
+
+        .error-icon {
+            width: 40px;
+            height: 40px;
+            background-color: #e74c3c;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+
+        .error-title h1 {
+            font-size: 36px;
+            font-weight: 600;
+            color: #000000;
+        }
+
+        .error-meta {
+            color: #888888;
+            font-size: 14px;
+            margin-bottom: 40px;
+        }
+
+        .section {
+            margin-bottom: 40px;
+        }
+
+        .section h2 {
+            font-size: 20px;
+            color: #000000;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        .section p {
+            color: #555555;
+            margin-bottom: 2px;
+            font-size: 16px;
+        }
+
+        .section p.english {
+            color: #888888;
+            font-style: italic;
+        }
+
+        a {
+            color: #0066cc;
+            text-decoration: none;
+        }
+
+        .back-button-container {
+            margin-top: 20px;
+            text-align: left;
+        }
+
+        .back-button {
+            background-color: #f8f9fa;
+            border: 1px solid #e9ecef;
+            color: #495057;
+            padding: 10px 16px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-family: inherit;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .back-button:hover {
+            background-color: #e9ecef;
+            border-color: #dee2e6;
+            color: #343a40;
+        }
+
+        .back-button:active {
+            background-color: #dee2e6;
+            transform: translateY(1px);
+        }
+
+        .footer {
+            margin-top: 15px;
+            padding-top: 15px;
+            color: #888888;
+            font-size: 14px;
+            text-align: center;
+        }
+
+        .footer a {
+            color: #0066cc;
+            text-decoration: none;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        .debug-info {
+            margin-top: 8px;
+            color: #cccccc;
+            font-size: 10px;
+            text-align: center;
+            line-height: 1.4;
+            word-break: break-all;
+        }
+
+
+        @media (max-width: 768px) {
+            body {
+                padding: 30px 25px;
+            }
+
+            .container {
+                max-width: 100%;
+            }
+
+            .error-header {
+                font-size: 16px;
+                margin-bottom: 25px;
+                text-align: center;
+            }
+
+            .error-title {
+                flex-direction: column;
+                text-align: center;
+                gap: 20px;
+                margin-bottom: 25px;
+            }
+
+            .error-title h1 {
+                font-size: 28px;
+                line-height: 1.3;
+            }
+
+            .error-icon {
+                width: 50px;
+                height: 50px;
+                font-size: 28px;
+            }
+
+            .error-meta {
+                font-size: 13px;
+                margin-bottom: 30px;
+                text-align: center;
+                word-break: break-all;
+            }
+
+            .section {
+                margin-bottom: 30px;
+            }
+
+            .section h2 {
+                font-size: 18px;
+                margin-bottom: 12px;
+            }
+
+            .section p {
+                font-size: 15px;
+                line-height: 1.7;
+                margin-bottom: 8px;
+            }
+
+            .footer {
+                font-size: 13px;
+                margin-top: 20px;
+                padding-top: 20px;
+                line-height: 1.5;
+            }
+
+            .debug-info {
+                font-size: 9px;
+            }
+
+            .back-button-container {
+                text-align: center;
+                margin-top: 25px;
+            }
+
+            .back-button {
+                font-size: 13px;
+                padding: 12px 20px;
+            }
+
+            hr {
+                margin: 30px 0 0 0 !important;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 25px 20px;
+            }
+
+            .error-title h1 {
+                font-size: 24px;
+            }
+
+            .error-icon {
+                width: 45px;
+                height: 45px;
+                font-size: 24px;
+            }
+
+            .section h2 {
+                font-size: 17px;
+            }
+
+            .section p {
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="error-header">URI Too Long | Error 414</div>
+
+        <div class="error-title">
+            <div class="error-icon">!</div>
+            <h1>URI가 너무 깁니다</h1>
+        </div>
+
+        <div class="error-meta">
+            Date: <span id="current-time"></span>
+        </div>
+
+        <div class="section">
+            <h2>왜 이런 오류가 발생했나요?</h2>
+            <p>요청한 URI(주소)가 서버에서 처리할 수 있는 최대 길이를 초과했습니다.</p>
+            <p class="english">The URI requested by the client is longer than the server is willing to interpret.</p>
+            <p>주로 GET 요청에 과도하게 긴 쿼리 문자열이 포함되었을 때 발생합니다.</p>
+            <p class="english">This typically occurs when a GET request includes an excessively long query string.</p>
+        </div>
+
+        <div class="section">
+            <h2>어떻게 해결할 수 있나요?</h2>
+            <p>URL의 매개변수를 줄이거나 POST 요청으로 변경해 주세요.</p>
+            <p class="english">Please reduce URL parameters or change to a POST request.</p>
+            <p>문제가 지속되면 웹사이트 관리자에게 <a href="mailto:me@zzunipark.com">문의</a>해 주세요.</p>
+            <p class="english">If the problem persists, please <a href="mailto:me@zzunipark.com">contact</a> the website
+                administrator.</p>
+
+            <div class="back-button-container">
+                <button onclick="history.back()" class="back-button">
+                    ← 이전 페이지로 돌아가기
+                </button>
+            </div>
+        </div>
+
+        <hr style="border: none; border-top: 1px solid #eeeeee; margin: 40px 0 0 0;">
+        <div class="footer">
+            Copyright 2025 (C) <a href="https://homelab.zzunipark.com">zzuniHomelab</a> All Rights Reserved.
+        </div>
+        <div class="debug-info" id="debug-info"></div>
+    </div>
+
+    <script>
+        function getCurrentUTCTime() {
+            const now = new Date();
+            const year = now.getUTCFullYear();
+            const month = String(now.getUTCMonth() + 1).padStart(2, '0');
+            const day = String(now.getUTCDate()).padStart(2, '0');
+            const hours = String(now.getUTCHours()).padStart(2, '0');
+            const minutes = String(now.getUTCMinutes()).padStart(2, '0');
+            const seconds = String(now.getUTCSeconds()).padStart(2, '0');
+
+            return `${year}-${month}-${day} ${hours}:${minutes}:${seconds} UTC`;
+        }
+
+        async function getExternalIP() {
+            try {
+                const response = await fetch('https://api.ipify.org?format=json');
+                const data = await response.json();
+                return data.ip;
+            } catch (error) {
+                return 'Unable to fetch';
+            }
+        }
+
+        document.getElementById('current-time').textContent = getCurrentUTCTime();
+
+        getExternalIP().then(ip => {
+            document.getElementById('debug-info').textContent = `${navigator.userAgent} ${ip}`;
+        });
+    </script>
+</body>
+
+</html>

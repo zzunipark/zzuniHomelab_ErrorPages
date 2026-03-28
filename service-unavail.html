@@ -6,9 +6,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Service Unavailable</title>
     <link rel="icon" type="image/x-icon" href="https://mirror.zzunipark.com/.assets/zzuniHomelab_favicon.ico">
-    <link rel="icon" type="image/png" sizes="16x16" href="https://mirror.zzunipark.com/.assets/zzuniHomelab_favicon-16x16.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="https://mirror.zzunipark.com/.assets/zzuniHomelab_favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="256x256" href="https://mirror.zzunipark.com/.assets/zzuniHomelab_favicon.png">
+    <link rel="icon" type="image/png" sizes="16x16"
+        href="https://mirror.zzunipark.com/.assets/zzuniHomelab_favicon-16x16.png">
+    <link rel="icon" type="image/png" sizes="32x32"
+        href="https://mirror.zzunipark.com/.assets/zzuniHomelab_favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="256x256"
+        href="https://mirror.zzunipark.com/.assets/zzuniHomelab_favicon.png">
     <link rel="apple-touch-icon" href="https://mirror.zzunipark.com/.assets/zzuniHomelab_favicon-apple-touch-icon.png">
     <style>
         * {
@@ -74,6 +77,43 @@
             color: #888888;
             font-size: 14px;
             margin-bottom: 40px;
+        }
+
+        .live-status {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            color: #b8bec7;
+            font-size: 10px;
+            font-weight: 500;
+            letter-spacing: 0.01em;
+            white-space: nowrap;
+            text-align: center;
+            width: 100%;
+            margin: 6px 0 0 0;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: #f59e0b;
+            animation: statusPulse 2s infinite;
+            flex-shrink: 0;
+            opacity: 0.75;
+        }
+
+        @keyframes statusPulse {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.55;
+            }
         }
 
         .section {
@@ -155,8 +195,8 @@
         }
 
         .footer {
-            margin-top: 15px;
-            padding-top: 15px;
+            margin-top: 0;
+            padding-top: 0;
             color: #888888;
             font-size: 14px;
             text-align: center;
@@ -218,6 +258,10 @@
                 margin-bottom: 30px;
                 text-align: center;
                 word-break: break-all;
+            }
+
+            .live-status {
+                font-size: 10px;
             }
 
             .section {
@@ -310,7 +354,7 @@
         </div>
 
         <div class="section">
-            <h2>서비스 상태</h2>
+            <h2>왜 이런 오류가 발생했나요?</h2>
             <p>현재 서버가 일시적으로 사용할 수 없는 상태입니다.</p>
             <p class="english">The server is temporarily unavailable.</p>
             <p>시스템 점검 또는 기술적인 문제로 인해 서비스에 접근할 수 없습니다.</p>
@@ -321,7 +365,9 @@
         </div>
 
         <div class="section">
-            <h2>문의 사항</h2>
+            <h2>어떻게 해결할 수 있나요?</h2>
+            <p>현재로서는 사용자가 취할 수 있는 조치가 없습니다. 잠시 후 다시 시도해 주세요.</p>
+            <p class="english">There is no action required on your part at this time. Please try again later.</p>
             <p>지속적인 문제가 발생할 경우 관리자에게 <a href="mailto:me@zzunipark.com">연락</a>해 주세요.</p>
             <p class="english">If the problem persists, please <a href="mailto:me@zzunipark.com">contact</a> the
                 administrator.</p>
@@ -335,12 +381,19 @@
 
         <hr style="border: none; border-top: 1px solid #eeeeee; margin: 40px 0 0 0;">
         <div class="footer">
-            Copyright 2025 (C) <a href="https://homelab.zzunipark.com">zzuniHomelab</a> All Rights Reserved.
+            © 2023-2026
+            <a href="https://homelab.zzunipark.com">zzuniHomelab</a>. ALL RIGHTS RESERVED.
         </div>
         <div class="debug-info" id="debug-info"></div>
+        <div class="live-status" id="live-status" aria-live="polite">
+            <span class="status-dot" id="status-dot"></span>
+            <span id="status-text">상태 불러오는 중...</span>
+        </div>
     </div>
 
     <script>
+        const SERVICE_STATUS_API = 'https://api.zzunipark.com/api/v1/zzunihomelab/status';
+
         function getCurrentUTCTime() {
             const now = new Date();
             const year = now.getUTCFullYear();
@@ -363,7 +416,38 @@
             }
         }
 
+        function setLiveStatus(text, color) {
+            const statusText = document.getElementById('status-text');
+            const statusDot = document.getElementById('status-dot');
+
+            statusText.textContent = text;
+            statusDot.style.backgroundColor = color;
+        }
+
+        async function updateServiceStatus() {
+            try {
+                const response = await fetch(SERVICE_STATUS_API, { cache: 'no-store' });
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}`);
+                }
+
+                const data = await response.json();
+                const isHealthy = typeof data.isHealthy === 'boolean' ? data.isHealthy : true;
+                const statusText = data.text && data.text.ko
+                    ? data.text.ko
+                    : (isHealthy ? '모든 서비스 정상' : '일부 서비스 장애 발생');
+                const statusColor = data.color || (isHealthy ? '#10b981' : '#ef4444');
+
+                setLiveStatus(statusText, statusColor);
+            } catch (error) {
+                setLiveStatus('서비스 상태 정보를 불러올 수 없습니다', '#f59e0b');
+            }
+        }
+
         document.getElementById('current-time').textContent = getCurrentUTCTime();
+
+        updateServiceStatus();
+        setInterval(updateServiceStatus, 60000);
 
         getExternalIP().then(ip => {
             document.getElementById('debug-info').textContent = `${navigator.userAgent} ${ip}`;

@@ -6,9 +6,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>424 - Failed Dependency</title>
     <link rel="icon" type="image/x-icon" href="https://mirror.zzunipark.com/.assets/zzuniHomelab_favicon.ico">
-    <link rel="icon" type="image/png" sizes="16x16" href="https://mirror.zzunipark.com/.assets/zzuniHomelab_favicon-16x16.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="https://mirror.zzunipark.com/.assets/zzuniHomelab_favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="256x256" href="https://mirror.zzunipark.com/.assets/zzuniHomelab_favicon.png">
+    <link rel="icon" type="image/png" sizes="16x16"
+        href="https://mirror.zzunipark.com/.assets/zzuniHomelab_favicon-16x16.png">
+    <link rel="icon" type="image/png" sizes="32x32"
+        href="https://mirror.zzunipark.com/.assets/zzuniHomelab_favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="256x256"
+        href="https://mirror.zzunipark.com/.assets/zzuniHomelab_favicon.png">
     <link rel="apple-touch-icon" href="https://mirror.zzunipark.com/.assets/zzuniHomelab_favicon-apple-touch-icon.png">
     <style>
         * {
@@ -306,9 +309,16 @@
 
         <hr style="border: none; border-top: 1px solid #eeeeee; margin: 40px 0 0 0;">
         <div class="footer">
-            Copyright 2025 (C) <a href="https://homelab.zzunipark.com">zzuniHomelab</a> All Rights Reserved.
+            © 2023-2026
+            <a href="https://homelab.zzunipark.com">zzuniHomelab</a>. ALL RIGHTS RESERVED.
         </div>
         <div class="debug-info" id="debug-info"></div>
+        <div class="live-status" id="live-status" aria-live="polite"
+            style="display:flex;align-items:center;justify-content:center;gap:6px;color:#b8bec7;font-size:10px;font-weight:500;letter-spacing:0.01em;white-space:nowrap;text-align:center;width:100%;margin:6px 0 0 0;">
+            <span class="status-dot" id="status-dot"
+                style="width:8px;height:8px;border-radius:50%;background-color:#f59e0b;flex-shrink:0;opacity:0.75;"></span>
+            <span id="status-text">상태 불러오는 중...</span>
+        </div>
     </div>
 
     <script>
@@ -334,7 +344,45 @@
             }
         }
 
+        const SERVICE_STATUS_API = 'https://api.zzunipark.com/api/v1/zzunihomelab/status';
+
+        function setLiveStatus(text, color) {
+            const statusText = document.getElementById('status-text');
+            const statusDot = document.getElementById('status-dot');
+
+            if (statusText) {
+                statusText.textContent = text;
+            }
+
+            if (statusDot) {
+                statusDot.style.backgroundColor = color;
+            }
+        }
+
+        async function updateServiceStatus() {
+            try {
+                const response = await fetch(SERVICE_STATUS_API, { cache: 'no-store' });
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}`);
+                }
+
+                const data = await response.json();
+                const isHealthy = typeof data.isHealthy === 'boolean' ? data.isHealthy : true;
+                const statusText = data.text && data.text.ko
+                    ? data.text.ko
+                    : (isHealthy ? '모든 서비스 정상' : '일부 서비스 장애 발생');
+                const statusColor = data.color || (isHealthy ? '#10b981' : '#ef4444');
+
+                setLiveStatus(statusText, statusColor);
+            } catch (error) {
+                setLiveStatus('서비스 상태 정보를 불러올 수 없습니다', '#f59e0b');
+            }
+        }
+
         document.getElementById('current-time').textContent = getCurrentUTCTime();
+
+        updateServiceStatus();
+        setInterval(updateServiceStatus, 60000);
 
         getExternalIP().then(ip => {
             document.getElementById('debug-info').textContent = `${navigator.userAgent} ${ip}`;

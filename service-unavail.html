@@ -337,7 +337,19 @@
                 font-size: 14px;
             }
         }
-    </style>
+            .live-status-link {
+            color: inherit;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: color 0.18s ease;
+        }
+
+        .live-status-link:hover {
+            color: rgba(184, 190, 199, 0.78);
+        }
+</style>
 </head>
 
 <body>
@@ -368,9 +380,8 @@
             <h2>어떻게 해결할 수 있나요?</h2>
             <p>현재로서는 사용자가 취할 수 있는 조치가 없습니다. 잠시 후 다시 시도해 주세요.</p>
             <p class="english">There is no action required on your part at this time. Please try again later.</p>
-            <p>지속적인 문제가 발생할 경우 관리자에게 <a href="mailto:me@zzunipark.com">연락</a>해 주세요.</p>
-            <p class="english">If the problem persists, please <a href="mailto:me@zzunipark.com">contact</a> the
-                administrator.</p>
+            <p>문제가 지속되면 <a href="https://reportaproblem.zzunipark.com/">zzuniHomelab 장애 및 오남용 신고 접수 페이지</a>에서 제보해주세요.</p>
+            <p class="english">If the problem persists, please report it through the <a href="https://reportaproblem.zzunipark.com/">zzuniHomelab Incident and Abuse Reports</a> page.</p>
 
             <div class="back-button-container">
                 <button onclick="history.back()" class="back-button">
@@ -385,9 +396,8 @@
             <a href="https://homelab.zzunipark.com">zzuniHomelab</a>. ALL RIGHTS RESERVED.
         </div>
         <div class="debug-info" id="debug-info"></div>
-        <div class="live-status" id="live-status" aria-live="polite">
-            <span class="status-dot" id="status-dot"></span>
-            <span id="status-text">상태 불러오는 중...</span>
+        <div class="live-status" id="live-status" aria-live="polite"><a href="https://status.zzunipark.com" class="live-status-link"><span class="status-dot" id="status-dot"></span>
+            <span id="status-text">상태 불러오는 중...</span></a>
         </div>
     </div>
 
